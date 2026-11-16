@@ -9,6 +9,8 @@
 const path = require('node:path');
 const express = require('express');
 const apiRouter = require('./routes/contacts');
+const repo = require('./repository');
+const { autoSeedIfEmpty } = require('./demo-data');
 const { DB_PATH } = require('./db');
 
 const app = express();
@@ -53,6 +55,16 @@ app.use((err, req, res, next) => {
   });
 });
 
+// 云端（如 Render 免费实例）重启后磁盘会重置，数据库为空时自动灌入演示数据
+if (process.env.AUTO_SEED === '1') {
+  const result = autoSeedIfEmpty(repo);
+  if (result.seeded) {
+    console.log(`[auto-seed] 数据库为空，已写入 ${result.inserted} 条演示数据`);
+  } else {
+    console.log(`[auto-seed] 已存在 ${result.existing} 条数据，跳过`);
+  }
+}
+
 const server = app.listen(PORT, HOST, () => {
   console.log('----------------------------------------------');
   console.log(' 通讯录服务已启动');
@@ -60,7 +72,6 @@ const server = app.listen(PORT, HOST, () => {
   console.log(` 数据库  : ${DB_PATH}`);
   console.log('----------------------------------------------');
 });
-
 // 优雅退出：先停止接收新请求，再关闭数据库连接
 function shutdown(signal) {
   console.log(`\n收到 ${signal}，正在关闭服务...`);

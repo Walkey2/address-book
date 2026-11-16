@@ -1,0 +1,24 @@
+# Render Blueprint：绑定 GitHub 仓库后一键创建 Node 服务
+# 文档：https://render.com/docs/blueprint-spec
+services:
+  - type: web
+    name: address-book
+    runtime: node
+    plan: free
+    region: singapore
+    branch: main
+    buildCommand: npm ci
+    startCommand: node server/index.js
+    healthCheckPath: /api/health
+    envVars:
+      - key: NODE_VERSION
+        value: 20.18.0
+      - key: AUTO_SEED
+        value: "1"
+      # 付费实例启用持久磁盘后，取消下面两段注释，并把 plan 改为 starter
+      # - key: DB_PATH
+      #   value: /var/data/addressbook.db
+    # disk:
+    #   name: data
+    #   mountPath: /var/data
+    #   sizeGB: 1

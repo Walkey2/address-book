@@ -29,6 +29,7 @@ address-book/
 │   ├── db.js               # SQLite 连接、建表、索引、类型枚举
 │   ├── repository.js       # 仓储层：全部 SQL 与导入合并事务
 │   ├── excel.js            # Excel 导入导出（表头别名、样式、校验）
+│   ├── demo-data.js        # 演示数据集与空库自动灌入逻辑
 │   └── routes/contacts.js  # 路由层：REST 接口 + 导入导出端点
 ├── public/
 │   ├── index.html          # 单页结构
@@ -36,12 +37,14 @@ address-book/
 │   └── js/app.js           # 前端状态机与交互逻辑
 ├── scripts/seed.js         # 演示数据（12 位联系人 / 34 条联系方式）
 ├── docs/
-│   ├── deploy.md           # 云服务器部署实操（阿里云 / 华为云）
+│   ├── deploy-render.md    # 部署到 Render（免费云平台，含休眠与磁盘限制说明）
+│   ├── deploy.md           # 阿里云 / 华为云 ECS 部署实操
 │   ├── 代码规范.md          # 分层、命名、SQL、API、提交信息约定
 │   ├── 导入示例.xlsx        # 标准导入模板（含示例数据）
 │   ├── 作业博客.md          # 项目开发记录（功能实现思路、测试、问题复盘）
 │   └── screenshots/        # 功能截图
 ├── data/                   # SQLite 数据文件（运行时生成，已 gitignore）
+├── render.yaml             # Render 部署蓝图（构建/启动命令、环境变量）
 └── package.json
 ```
 
@@ -111,7 +114,19 @@ updated_at  TEXT
 
 ## 部署
 
-见 [docs/deploy.md](docs/deploy.md)，涵盖阿里云 / 华为云 ECS 命令行部署与宝塔面板部署两种方式。
+| 方式 | 文档 | 适用 |
+|---|---|---|
+| Render（推荐，免费） | [docs/deploy-render.md](docs/deploy-render.md) | 绑定 GitHub 自动构建，自带 HTTPS，5 分钟上线 |
+| 阿里云 / 华为云 ECS | [docs/deploy.md](docs/deploy.md) | 需要完整控制虚拟机时使用，含 Nginx 反代与宝塔面板两种做法 |
+
+应用读取平台注入的 `PORT` 环境变量，并支持以下可选环境变量：
+
+| 变量 | 说明 |
+|---|---|
+| `PORT` | 监听端口，默认 3000 |
+| `HOST` | 监听地址，默认 0.0.0.0 |
+| `DB_PATH` | SQLite 文件路径，默认 `data/addressbook.db` |
+| `AUTO_SEED` | 设为 `1` 时，启动时若数据库为空则自动写入演示数据（用于磁盘不持久的托管平台） |
 
 ## 开发与提交
 
