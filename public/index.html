@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="通讯录 —— 支持收藏、多联系方式、Excel 导入导出的地址簿">
+  <title>通讯录 · Address Book</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%232563eb'/%3E%3Ctext x='32' y='44' font-size='34' font-family='sans-serif' fill='white' text-anchor='middle'%3E%E9%80%9A%3C/text%3E%3C/svg%3E">
+  <link rel="stylesheet" href="./css/style.css">
+</head>
+<body>
+
+  <!-- ===================== 顶栏 ===================== -->
+  <header class="topbar">
+    <div class="brand">
+      <div class="brand-logo">通</div>
+      <div class="brand-text">
+        <h1>通讯录</h1>
+        <p>Address Book</p>
+      </div>
+    </div>
+
+    <div class="search-box">
+      <svg class="search-icon" viewBox="0 0 24 24" aria-hidden="true">
+        <circle cx="11" cy="11" r="7"></circle>
+        <line x1="16.5" y1="16.5" x2="21" y2="21"></line>
+      </svg>
+      <input id="searchInput" type="search" placeholder="搜索姓名、公司、电话、邮箱…" autocomplete="off">
+      <button id="clearSearch" class="clear-btn" title="清空搜索" hidden>&times;</button>
+    </div>
+
+    <div class="topbar-actions">
+      <button id="btnNew" class="btn btn-primary">
+        <svg viewBox="0 0 24 24" class="ic"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+        新建联系人
+      </button>
+      <label class="btn" for="importInput" title="从 Excel 导入联系人">
+        <svg viewBox="0 0 24 24" class="ic"><path d="M12 16V4"></path><path d="M7 9l5-5 5 5"></path><path d="M4 17v2a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-2"></path></svg>
+        导入
+      </label>
+      <input id="importInput" type="file" accept=".xlsx" hidden>
+      <button id="btnExport" class="btn" title="导出为 Excel">
+        <svg viewBox="0 0 24 24" class="ic"><path d="M12 4v12"></path><path d="M7 11l5 5 5-5"></path><path d="M4 17v2a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-2"></path></svg>
+        导出
+      </button>
+    </div>
+  </header>
+
+  <!-- ===================== 主体 ===================== -->
+  <main class="layout">
+    <aside class="sidebar">
+      <div class="tabs" role="tablist">
+        <button class="tab is-active" data-filter="all" role="tab">
+          全部 <span class="badge" id="countAll">0</span>
+        </button>
+        <button class="tab" data-filter="fav" role="tab">
+          <svg viewBox="0 0 24 24" class="ic ic-star"><path d="M12 3.6l2.6 5.3 5.8.8-4.2 4.1 1 5.8L12 16.9l-5.2 2.7 1-5.8-4.2-4.1 5.8-.8z"></path></svg>
+          收藏 <span class="badge" id="countFav">0</span>
+        </button>
+      </div>
+      <ul id="contactList" class="contact-list"></ul>
+      <div id="listEmpty" class="list-empty" hidden></div>
+    </aside>
+
+    <section id="detail" class="detail"></section>
+  </main>
+
+  <!-- ===================== 导入结果弹窗 ===================== -->
+  <div id="modalMask" class="modal-mask" hidden>
+    <div class="modal" role="dialog" aria-modal="true">
+      <h3 id="modalTitle">导入结果</h3>
+      <div id="modalBody" class="modal-body"></div>
+      <div class="modal-footer">
+        <button id="modalClose" class="btn btn-primary">知道了</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="toast" class="toast" hidden></div>
+
+  <script src="./js/app.js"></script>
+</body>
+</html>
