@@ -1,6 +1,6 @@
 # 云服务器部署实操（阿里云 / 华为云）
 
-> 目标：让通讯录通过公网 IP 直接访问，拿到作业 1.4 的 **+15 分**加分。
+> 目标：把通讯录部署到公网可访问的云服务器，验证"本地开发 → 线上运行"的完整链路。
 > 本文以 **Ubuntu 22.04** 为例，阿里云 ECS 与华为云弹性云服务器（ECS）操作几乎一致，差异处会单独标注。
 
 ---
@@ -14,7 +14,7 @@
 | 安全组 | 放行 22（SSH）、80（HTTP），如需 HTTPS 再放行 443 |
 | 代码 | 已推送到 GitHub 仓库 |
 
-**成本提示**：阿里云"学生机"/华为云"云耀云服务器"都支持按需或包月，做完作业可退订。若只想临时交作业，按量付费几小时即可。
+**成本提示**：阿里云"学生机"与华为云"云耀云服务器"均支持按需或包月，按量付费几小时的成本最低，适合临时演示环境。
 
 ---
 
@@ -74,7 +74,7 @@ apt install -y build-essential python3
 
 ```bash
 cd /opt
-git clone https://github.com/<你的用户名>/<仓库名>.git address-book
+git clone https://github.com/Walkey2/address-book.git address-book
 cd address-book
 
 # 安装生产依赖
@@ -186,7 +186,7 @@ crontab -e
 0 3 * * * cp /opt/address-book/data/addressbook.db /root/backup-$(date +\%F).db && find /root -name "backup-*.db" -mtime +7 -delete
 ```
 
-> SQLite 开了 WAL，备份时最好先 `pm2 stop` 或使用 `sqlite3 addressbook.db ".backup"` 保证一致性。作业场景直接 cp 也够用。
+> SQLite 开了 WAL，备份时最好先 `pm2 stop` 或使用 `sqlite3 addressbook.db ".backup"` 保证一致性。数据量不大时直接 cp 也够用。
 
 ---
 

@@ -1,17 +1,17 @@
 # 通讯录 Address Book
 
-> 福州大学《软件工程》（FZU–MU）极限编程作业 —— 支持**收藏联系人**、**一个联系人挂多套联系方式**、**Excel 导入导出**、**可云部署**的通讯录系统。
+> 一个支持**收藏联系人**、**一个联系人挂多套联系方式**、**Excel 导入导出**、**可部署到云服务器**的通讯录系统。后端 Node.js + Express + SQLite，前端原生 HTML/CSS/JS，无构建步骤。
 
 ## 功能一览
 
-| 功能 | 说明 | 对应要求 |
-|---|---|---|
-| 收藏联系人 | 列表与详情均可一键星标，收藏项置顶并按收藏单独筛选 | 1.1（25 分） |
-| 多联系方式 | 一个联系人可自由添加任意多条电话 / 邮箱 / 微信 / QQ / 地址 / 其他，带自定义标签 | 1.2（10 分） |
-| 导出 Excel | 一人一行、一类信息一列，同类别多值自动扩展列（电话、电话2…），带表头样式与填写说明页 | 1.3（25 分） |
-| 导入 Excel | 识别中英文表头与序号后缀，逐行校验，重复联系人自动合并，导入结果可视化反馈 | 1.3（25 分） |
-| 搜索 | 姓名 / 公司 / 备注 / 任意联系方式模糊搜索 | 体验项 |
-| 云部署 | 单进程 + 静态资源，可选 Nginx 反代，附完整部署文档 | 1.4（+15 分） |
+| 功能 | 说明 |
+|---|---|
+| 收藏联系人 | 列表与详情均可一键星标，收藏项置顶，并可按收藏单独筛选 |
+| 多联系方式 | 一个联系人可添加任意多条电话 / 邮箱 / 微信 / QQ / 地址 / 其他，支持自定义标签（工作、家庭…） |
+| 导出 Excel | 一人一行、一类信息一列，同类别多值自动扩展列（电话、电话2…），带表头样式与填写说明页 |
+| 导入 Excel | 识别中英文表头与序号后缀，逐行校验，重复联系人自动合并，导入结果可视化反馈 |
+| 搜索 | 姓名 / 公司 / 备注 / 任意联系方式模糊搜索 |
+| 部署 | 单进程 + 静态资源，可选 Nginx 反代，附完整部署文档 |
 
 ## 技术栈
 
@@ -36,11 +36,10 @@ address-book/
 │   └── js/app.js           # 前端状态机与交互逻辑
 ├── scripts/seed.js         # 演示数据（12 位联系人 / 34 条联系方式）
 ├── docs/
-│   ├── 建仓与部署手册.md    # 从建 GitHub 仓库到云部署的完整操作清单（先看这个）
-│   ├── deploy.md           # 阿里云 / 华为云部署实操（命令细节）
+│   ├── deploy.md           # 云服务器部署实操（阿里云 / 华为云）
 │   ├── 代码规范.md          # 分层、命名、SQL、API、提交信息约定
 │   ├── 导入示例.xlsx        # 标准导入模板（含示例数据）
-│   ├── 作业博客.md          # 作业博客草稿
+│   ├── 作业博客.md          # 项目开发记录（功能实现思路、测试、问题复盘）
 │   └── screenshots/        # 功能截图
 ├── data/                   # SQLite 数据文件（运行时生成，已 gitignore）
 └── package.json
@@ -60,7 +59,7 @@ npm start
 # 打开 http://localhost:3000
 ```
 
-要求 Node.js ≥ 18。数据库文件位于 `data/addressbook.db`，首次启动自动创建，无需手动建表。
+要求 Node.js ≥ 18。数据库文件位于 `data/addressbook.db`，首次启动自动创建，无需手动建表；删除该文件即可重置为空白通讯录。
 
 ## 数据模型
 
@@ -114,41 +113,23 @@ updated_at  TEXT
 
 见 [docs/deploy.md](docs/deploy.md)，涵盖阿里云 / 华为云 ECS 命令行部署与宝塔面板部署两种方式。
 
-## 提交到 GitHub（commit 拆分建议）
+## 开发与提交
 
-作业要求 commit ≥ 3 次，且博客要展示每位贡献者的提交次数。**请先用你自己的 GitHub 身份配置并提交**，否则提交人统计会对不上。
-
-逐条命令、网页上点哪里、报错怎么处理，见 **[docs/建仓与部署手册.md](docs/建仓与部署手册.md)**。速览版：
+- **分支**：`main` 始终保持可运行状态；新增功能在 `feat/*` 分支开发，自测通过后合并回 `main`。
+- **提交粒度**：一个提交只做一件事，按"工程骨架 → 数据层 → 文件处理 → 接口 → 前端 → 文档"的顺序推进，便于回溯与 review。
+- **提交信息**：`类型: 摘要`，类型取 `feat` / `fix` / `docs` / `style` / `refactor` / `chore`，摘要不超过 50 字符。
+- **代码约定**：服务端统一 `'use strict'`，SQL 只出现在 `repository.js`，路由层不写 SQL；前端不使用内联事件属性，统一事件委托，所有插入 HTML 的文本经 `esc()` 转义。详见 [docs/代码规范.md](docs/代码规范.md)。
 
 ```bash
-cd address-book
-git init
-git config user.name  "你的名字"
-git config user.email "你的GitHub邮箱"
-
-# 分 6 次提交，每个提交只做一件事（每条 add 后先 git status --short 核对清单）
-git add package.json package-lock.json .gitignore .gitattributes && git commit -m "chore: 初始化项目结构与依赖"
-git add server/db.js server/repository.js && git commit -m "feat: 联系人数据模型与仓储层（收藏、多联系方式）"
-git add server/excel.js && git commit -m "feat: Excel 导入导出（表头别名、重复合并、样式）"
-git add server/index.js server/routes && git commit -m "feat: REST 接口、收藏切换与静态资源服务"
-git add public && git commit -m "feat: 前端页面、收藏筛选与动态联系方式编辑"
-git add docs README.md scripts && git commit -m "docs: 补充部署文档、代码规范与作业博客"
-
-# 关联远程仓库并推送
-git branch -M main
-git remote add origin https://github.com/<你的用户名>/address-book.git
-git push -u origin main
+# 典型的一次功能提交
+git checkout -b feat/import-export
+# ……开发与自测……
+git add server/excel.js
+git commit -m "feat: Excel 导入导出（表头别名、重复合并、样式）"
+git checkout main && git merge --no-ff feat/import-export
 ```
 
-> 建 GitHub 仓库时**不要勾** Add a README / .gitignore / license，否则远程已有提交，push 会报 `rejected: fetch first`。
-> `node_modules/` 与 `data/*.db` 已被 `.gitignore` 排除，不会误提交；`package-lock.json` 必须提交，保证依赖可复现。
-
-## 开发约定
-
-- 分支：`main` 为可运行版本，功能开发走 `feat/*` 分支后合并；
-- 提交信息遵循 `类型: 摘要`（`feat` / `fix` / `docs` / `style` / `refactor`）；
-- 服务端统一 `'use strict'`，SQL 只出现在 `repository.js`，路由层不写 SQL；
-- 前端不使用内联事件属性，统一事件委托，所有插入 HTML 的文本经 `esc()` 转义。
+> `node_modules/` 与 `data/*.db` 已被 `.gitignore` 排除；`package-lock.json` 保留在仓库中，保证依赖可复现。
 
 ## License
 
