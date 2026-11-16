@@ -1,0 +1,27 @@
+{
+  "name": "address-book",
+  "version": "1.0.0",
+  "private": true,
+  "description": "FZU-MU 软件工程 极限编程作业 - 通讯录（收藏 / 多联系方式 / Excel 导入导出）",
+  "main": "server/index.js",
+  "scripts": {
+    "start": "node server/index.js",
+    "dev": "node --watch server/index.js",
+    "seed": "node scripts/seed.js"
+  },
+  "keywords": [
+    "address-book",
+    "express",
+    "sqlite",
+    "extreme-programming"
+  ],
+  "license": "MIT",
+  "engines": {
+    "node": ">=18"
+  },
+  "dependencies": {
+    "better-sqlite3": "^11.7.0",
+    "exceljs": "^4.4.0",
+    "express": "^4.21.2"
+  }
+}
